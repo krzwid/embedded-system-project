@@ -28,16 +28,15 @@ def is_proper_number(number: str):
 
 
 def wait_for_sms():
-    quit_option = input()
-    print('To quit enter any letter:')
+    # function show last unread message or wait for new sms
+    # there is no option to quit if there is no message
+    print('Waiting for sms...')
     while True:
         if gsm.SMS_available() > 0:
             new_sms = gsm.SMS_read()
             print('Got new SMS from number %s' % new_sms.Sender)
             print('It was received at %s' % new_sms.Date)
             print('The message is: %s' % new_sms.Message)
-            break
-        if type(quit_option) == str:
             break
 
 
@@ -125,17 +124,17 @@ while True:
     print_menu()
     what_to_do = input()
 
-    if what_to_do == 1:
+    if what_to_do == '1':
         phone()
-    elif what_to_do == 2:
+    elif what_to_do == '2':
         wait_for_sms()
-    elif what_to_do == 3:
+    elif what_to_do == '3':
         write_sms()
-    elif what_to_do == 4:
+    elif what_to_do == '4':
         show_location()
-    elif what_to_do == 5:
+    elif what_to_do == '5':
         calculate_distance_between_two_places()
-    elif what_to_do == 6:
+    elif what_to_do == '6':
         calculate_distance_between_your_position_and_sth_else()
     else:
         print('That\'s not the proper option')
