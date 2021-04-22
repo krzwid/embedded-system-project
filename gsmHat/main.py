@@ -3,6 +3,7 @@ import time
 from gsmHat import GSMHat, SMS, GPS
 
 gsm = GSMHat('/dev/ttyS0', 115200)
+gsm.ColData()
 
 
 def phone():
