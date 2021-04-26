@@ -28,16 +28,43 @@ def is_proper_number(number: str):
     return True
 
 
-def wait_for_sms():
-    # function show last unread message or wait for new sms
-    # there is no option to quit if there is no message
-    print('Waiting for sms...')
+def prins_sms():
+    new_sms = gsm.SMS_read()
+    print('Got new SMS from number %s' % new_sms.Sender)
+    print('It was received at %s' % new_sms.Date)
+    print('The message is: %s' % new_sms.Message)
+
+
+def show_all_messages():
+    while gsm.SMS_available() > 0:
+        prins_sms()
+        break
+
+
+def show_n_messages(number):
+    while number > 0:
+        if gsm.SMS_available() > 0:
+            prins_sms()
+        number -= number
+
+
+def show_n_messages_or_wait(number):
+    while True:
+        if number > 0 and gsm.SMS_available() > 0:
+            prins_sms()
+            number -= number
+            break
+
+
+def wait_for_new_sms():
+    if gsm.SMS_available() > 0:
+        print("\n\tYou have unread SMS(s):\n")
+        show_all_messages()
+        print("\n\tNow I'm waiting for new SMS\n")
+
     while True:
         if gsm.SMS_available() > 0:
-            new_sms = gsm.SMS_read()
-            print('Got new SMS from number %s' % new_sms.Sender)
-            print('It was received at %s' % new_sms.Date)
-            print('The message is: %s' % new_sms.Message)
+            prins_sms()
             break
 
 
@@ -114,6 +141,8 @@ def print_menu():
     print('Menu:')
     print('1 - Phone')
     print('2 - Wait for sms')
+    print('\t2.1 - Show unread messages')
+    print('\t2.2 - Show unread messages and wait for the new one')
     print('3 - Write sms')
     print('4 - Show location')
     print('5 - Calculate distance between two places')
@@ -128,7 +157,11 @@ while True:
     if what_to_do == '1':
         phone()
     elif what_to_do == '2':
-        wait_for_sms()
+        wait_for_new_sms()
+    elif what_to_do == '2.1':
+        show_all_messages()
+    elif what_to_do == '2.2':
+        wait_for_new_sms()
     elif what_to_do == '3':
         write_sms()
     elif what_to_do == '4':
