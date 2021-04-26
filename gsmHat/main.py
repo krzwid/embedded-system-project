@@ -1,5 +1,4 @@
 import time
-
 from gsmHat import GSMHat, SMS, GPS
 
 gsm = GSMHat('/dev/ttyS0', 115200)
@@ -28,7 +27,7 @@ def is_proper_number(number: str):
     return True
 
 
-def prins_sms():
+def print_sms():
     new_sms = gsm.SMS_read()
     print('Got new SMS from number %s' % new_sms.Sender)
     print('It was received at %s' % new_sms.Date)
@@ -37,21 +36,21 @@ def prins_sms():
 
 def show_all_messages():
     while gsm.SMS_available() > 0:
-        prins_sms()
+        print_sms()
         break
 
 
 def show_n_messages(number):
     while number > 0:
         if gsm.SMS_available() > 0:
-            prins_sms()
+            print_sms()
         number -= number
 
 
 def show_n_messages_or_wait(number):
     while True:
         if number > 0 and gsm.SMS_available() > 0:
-            prins_sms()
+            print_sms()
             number -= number
             break
 
@@ -64,7 +63,7 @@ def wait_for_new_sms():
 
     while True:
         if gsm.SMS_available() > 0:
-            prins_sms()
+            print_sms()
             break
 
 
