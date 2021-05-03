@@ -16,13 +16,8 @@ def phone():
 
 
 def is_proper_number(number: str):
-    if len(number) != 12:
-        return False
-    if number[0] != '+':
-        return False
-    if number[1] != '4':
-        return False
-    if number[2] != '8':
+    if len(number) != 12 or number[0] != '+' or number[1] != '4' or number[2] != '8':
+        print("That's not valid number. Please start with \'+48\' and then enter 9 numbers.")
         return False
     return True
 
