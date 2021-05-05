@@ -135,12 +135,11 @@ def print_menu():
     print('Menu:')
     print('1 - Phone')
     print('2 - Wait for sms')
-    print('\t2.1 - Show unread messages')
-    print('\t2.2 - Show unread messages and wait for the new one')
-    print('3 - Write sms')
-    print('4 - Show location')
-    print('5 - Calculate distance between two places')
-    print('6 - Calculate distance between you and another place')
+    print('3 - Show unread messages')
+    print('4 - Write sms')
+    print('5 - Show location')
+    print('6 - Calculate distance between two places')
+    print('7 - Calculate distance between you and another place')
 
 
 print('Welcome to SIM868')
@@ -152,17 +151,15 @@ while True:
         phone()
     elif what_to_do == '2':
         wait_for_new_sms()
-    elif what_to_do == '2.1':
-        show_all_messages()
-    elif what_to_do == '2.2':
-        wait_for_new_sms()
     elif what_to_do == '3':
-        write_sms()
+        show_all_messages()
     elif what_to_do == '4':
-        show_location()
+        write_sms()
     elif what_to_do == '5':
-        calculate_distance_between_two_places()
+        show_location()
     elif what_to_do == '6':
+        calculate_distance_between_two_places()
+    elif what_to_do == '7':
         calculate_distance_between_your_position_and_sth_else()
     else:
         print('That\'s not the proper option')
