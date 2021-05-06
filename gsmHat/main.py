@@ -1,18 +1,29 @@
 import time
 from gsmHat import GSMHat, SMS, GPS
+import threading
 
 gsm = GSMHat('/dev/ttyS0', 115200)
 gsm.ColData()
+
+backToMainMenu = False
+
+
+def get_input():
+    data = input()  # Something akin to this
+    if data == 'q' or data == 'exit':
+        global backToMainMenu
+        backToMainMenu = True
+    return data
 
 
 def phone():
     print('Enter a phone number with \'+48\':')
     number = input()
     if is_proper_number(number):
-        gsm.Call(number)        # This call hangs up automatically after 15 seconds
-        time.sleep(10)          # Wait 10 seconds ...
-        gsm.HangUp()            # Or you can HangUp by yourself earlier
-        gsm.Call(number, 60)    # Or lets change the timeout to 60 seconds. It hangs up automatically after 60 seconds
+        gsm.Call(number)  # This call hangs up automatically after 15 seconds
+        time.sleep(10)  # Wait 10 seconds ...
+        gsm.HangUp()  # Or you can HangUp by yourself earlier
+        gsm.Call(number, 60)  # Or lets change the timeout to 60 seconds. It hangs up automatically after 60 seconds
 
 
 def is_proper_number(number: str):
@@ -32,7 +43,6 @@ def print_sms():
 def show_all_messages():
     while gsm.SMS_available() > 0:
         print_sms()
-        break
 
 
 def show_n_messages(number):
@@ -51,6 +61,10 @@ def show_n_messages_or_wait(number):
 
 
 def wait_for_new_sms():
+    input_thread = threading.Thread(target=get_input)
+    input_thread.start()
+    global backToMainMenu
+
     if gsm.SMS_available() > 0:
         print("\n\tYou have unread SMS(s):\n")
         show_all_messages()
@@ -61,14 +75,23 @@ def wait_for_new_sms():
             print_sms()
             break
 
+        if backToMainMenu:
+            break
+
 
 def write_sms():
-    print('Enter message:')
-    message = input()
-    print('Enter a phone number with \'+48\':')
-    number = input()
-    if is_proper_number(number):
-        gsm.SMS_write(number, message)
+    input_thread = threading.Thread(target=get_input)
+    input_thread.start()
+    global backToMainMenu
+
+    while not backToMainMenu:
+        print('Enter message:')
+        message = input()
+        print('Enter a phone number with \'+48\':')
+        number = input()
+        if is_proper_number(number):
+            gsm.SMS_write(number, message)
+            backToMainMenu = True
 
 
 def show_location():
@@ -93,42 +116,56 @@ def show_location():
 
 
 def calculate_distance_between_two_places():
-    gps_obj_one = GPS()
-    print('Enter co-ordinates of the first place:\n')
-    print('latitude: ')
-    latitude = input()
-    gps_obj_one.Latitude = float(latitude)
-    print('longitude: ')
-    longitude = input()
-    gps_obj_one.Longitude = float(longitude)
+    input_thread = threading.Thread(target=get_input)
+    input_thread.start()
+    global backToMainMenu
 
-    gps_obj_two = GPS()
-    print('Enter co-ordinates of the second place:\n')
-    print('latitude: ')
-    latitude = input()
-    gps_obj_two.Latitude = float(latitude)
-    print('longitude: ')
-    longitude = input()
-    gps_obj_two.Longitude = float(longitude)
+    while not backToMainMenu:
+        gps_obj_one = GPS()
+        print('Enter co-ordinates of the first place:\n')
+        print('latitude: ')
+        latitude = input()
+        gps_obj_one.Latitude = float(latitude)
+        print('longitude: ')
+        longitude = input()
+        gps_obj_one.Longitude = float(longitude)
 
-    print('Distance from this two places:')
-    print(GPS.CalculateDeltaP(gps_obj_one, gps_obj_two))
+        gps_obj_two = GPS()
+        print('Enter co-ordinates of the second place:\n')
+        print('latitude: ')
+        latitude = input()
+        gps_obj_two.Latitude = float(latitude)
+        print('longitude: ')
+        longitude = input()
+        gps_obj_two.Longitude = float(longitude)
+
+        print('Distance from this two places:')
+        print(GPS.CalculateDeltaP(gps_obj_one, gps_obj_two))
+
+        backToMainMenu = True
 
 
 def calculate_distance_between_your_position_and_sth_else():
-    gps_obj_your = gsm.GetActualGPS()
+    input_thread = threading.Thread(target=get_input)
+    input_thread.start()
+    global backToMainMenu
 
-    gps_obj_another = GPS()
-    print('Enter co-ordinates of the another place:\n')
-    print('latitude: ')
-    latitude = input()
-    gps_obj_another.Latitude = float(latitude)
-    print('longitude: ')
-    longitude = input()
-    gps_obj_another.Longitude = float(longitude)
+    while not backToMainMenu:
+        gps_obj_your = gsm.GetActualGPS()
 
-    print('Distance from you and another place:')
-    print(GPS.CalculateDeltaP(gps_obj_your, gps_obj_another))
+        gps_obj_another = GPS()
+        print('Enter co-ordinates of the another place:\n')
+        print('latitude: ')
+        latitude = input()
+        gps_obj_another.Latitude = float(latitude)
+        print('longitude: ')
+        longitude = input()
+        gps_obj_another.Longitude = float(longitude)
+
+        print('Distance from you and another place:')
+        print(GPS.CalculateDeltaP(gps_obj_your, gps_obj_another))
+
+        backToMainMenu = True
 
 
 def print_menu():
@@ -148,18 +185,25 @@ while True:
     what_to_do = input()
 
     if what_to_do == '1':
+        backToMainMenu = False
         phone()
     elif what_to_do == '2':
+        backToMainMenu = False
         wait_for_new_sms()
     elif what_to_do == '3':
+        backToMainMenu = False
         show_all_messages()
     elif what_to_do == '4':
+        backToMainMenu = False
         write_sms()
     elif what_to_do == '5':
+        backToMainMenu = False
         show_location()
     elif what_to_do == '6':
+        backToMainMenu = False
         calculate_distance_between_two_places()
     elif what_to_do == '7':
+        backToMainMenu = False
         calculate_distance_between_your_position_and_sth_else()
     else:
         print('That\'s not the proper option')
