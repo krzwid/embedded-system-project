@@ -80,18 +80,13 @@ def wait_for_new_sms():
 
 
 def write_sms():
-    input_thread = threading.Thread(target=get_input)
-    input_thread.start()
-    global backToMainMenu
+    print('Enter message:')
+    message = input()
+    print('Enter a phone number with \'+48\':')
+    number = input()
+    if is_proper_number(number):
+        gsm.SMS_write(number, message)
 
-    while not backToMainMenu:
-        print('Enter message:')
-        message = input()
-        print('Enter a phone number with \'+48\':')
-        number = input()
-        if is_proper_number(number):
-            gsm.SMS_write(number, message)
-            backToMainMenu = True
 
 
 def show_location():
@@ -116,56 +111,45 @@ def show_location():
 
 
 def calculate_distance_between_two_places():
-    input_thread = threading.Thread(target=get_input)
-    input_thread.start()
-    global backToMainMenu
+    gps_obj_one = GPS()
+    print('Enter co-ordinates of the first place:\n')
+    print('latitude: ')
+    latitude = input()
+    gps_obj_one.Latitude = float(latitude)
+    print('longitude: ')
+    longitude = input()
+    gps_obj_one.Longitude = float(longitude)
 
-    while not backToMainMenu:
-        gps_obj_one = GPS()
-        print('Enter co-ordinates of the first place:\n')
-        print('latitude: ')
-        latitude = input()
-        gps_obj_one.Latitude = float(latitude)
-        print('longitude: ')
-        longitude = input()
-        gps_obj_one.Longitude = float(longitude)
+    gps_obj_two = GPS()
+    print('Enter co-ordinates of the second place:\n')
+    print('latitude: ')
+    latitude = input()
+    gps_obj_two.Latitude = float(latitude)
+    print('longitude: ')
+    longitude = input()
+    gps_obj_two.Longitude = float(longitude)
 
-        gps_obj_two = GPS()
-        print('Enter co-ordinates of the second place:\n')
-        print('latitude: ')
-        latitude = input()
-        gps_obj_two.Latitude = float(latitude)
-        print('longitude: ')
-        longitude = input()
-        gps_obj_two.Longitude = float(longitude)
+    print('Distance from this two places:')
+    print(GPS.CalculateDeltaP(gps_obj_one, gps_obj_two))
 
-        print('Distance from this two places:')
-        print(GPS.CalculateDeltaP(gps_obj_one, gps_obj_two))
-
-        backToMainMenu = True
 
 
 def calculate_distance_between_your_position_and_sth_else():
-    input_thread = threading.Thread(target=get_input)
-    input_thread.start()
-    global backToMainMenu
 
-    while not backToMainMenu:
-        gps_obj_your = gsm.GetActualGPS()
+    gps_obj_your = gsm.GetActualGPS()
 
-        gps_obj_another = GPS()
-        print('Enter co-ordinates of the another place:\n')
-        print('latitude: ')
-        latitude = input()
-        gps_obj_another.Latitude = float(latitude)
-        print('longitude: ')
-        longitude = input()
-        gps_obj_another.Longitude = float(longitude)
+    gps_obj_another = GPS()
+    print('Enter co-ordinates of the another place:\n')
+    print('latitude: ')
+    latitude = input()
+    gps_obj_another.Latitude = float(latitude)
+    print('longitude: ')
+    longitude = input()
+    gps_obj_another.Longitude = float(longitude)
 
-        print('Distance from you and another place:')
-        print(GPS.CalculateDeltaP(gps_obj_your, gps_obj_another))
+    print('Distance from you and another place:')
+    print(GPS.CalculateDeltaP(gps_obj_your, gps_obj_another))
 
-        backToMainMenu = True
 
 
 def print_menu():
